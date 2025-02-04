@@ -99,4 +99,19 @@ def Student_api(request):
         json_data = JSONRenderer().render(serializer.errors)
         return HttpResponse(json_data,content_type = 'application/json')
 
-  
+    """Update Data"""
+    if request.method == 'PUT':
+        json_data = request.body
+        stream = io.BytesIO(json_data)
+        pythondata = JSONParser().parse(stream)
+        id = pythondata.get('id')
+        stu = Student.objects.get(id = id)
+        serializer = StudetSerializer(stu, data = pythondata, partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            res = {'msg' : 'Data Updated !!'}
+            json_data = JSONRenderer().render(res)
+            return HttpResponse(json_data,content_type = 'application/json')
+
+        json_data = JSONRenderer().render(serializer.errors)
+        return HttpResponse(json_data,content_type = 'application/json')
