@@ -1,0 +1,55 @@
+# from django.shortcuts import render
+# from .models import Student
+# from .serializers import StudetSerializer
+# from rest_framework.renderers import JSONRenderer
+# from django.http import HttpResponse,JsonResponse
+
+# for retrieve data
+# def Student_Detail(request, pk):
+
+#     stu = Student.objects.get(id = pk) # Fetching data from database
+#     serializer = StudetSerializer(stu) # converting model instance into native python datatype
+#     json_data = JSONRenderer().render(serializer.data) # convert python datatype dict into json 
+#     return HttpResponse(json_data,content_type = 'application/json')
+#     # return JsonResponse(serializer.data)
+
+
+# def Student_List(request):
+#     stu = Student.objects.all()  
+#     serializer = StudetSerializer(stu,many = True)
+#     json_data = JSONRenderer().render(serializer.data)
+#     return HttpResponse(json_data,content_type = 'application/json')
+#     # return JsonResponse(serializer.data,safe=False)
+
+from django.shortcuts import render
+import io
+from rest_framework.parsers import JSONParser
+from .serializers import StudetSerializer
+from rest_framework.renderers import JSONRenderer
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def Student_Create(request):
+    if request.method == 'POST':
+
+        json_data = request.body # json data from third party application
+        print("body:-",json_data)
+
+        stream = io.BytesIO(json_data)# it shows id of object
+        print("stream:-",stream)
+
+        pythondata = JSONParser().parse(stream)# converted json data into python native data
+        print("pythondata:-",pythondata)
+
+        serializer = StudetSerializer(data = pythondata)# converted python data into complex data
+        print("serializer:-",serializer)
+
+        if serializer.is_valid():
+            serializer.save()
+            res = {'msg':'Data Saved'}
+            json_data = JSONRenderer().render(res)
+            return HttpResponse(json_data,content_type = 'application/json')
+        
+        json_data = JSONRenderer().render(serializer.errors)
+        return HttpResponse(json_data,content_type = 'application/json')
