@@ -13,19 +13,21 @@ def get_data(id = None):
     data = r.json()
     print(data)
 
-# get_data(2)
+# get_data()
 
 
 """Create Data"""
 def post_data():
     data = {
-        'name' : 'kohan',
-        'roll' : 112,
-        'city' : 'Jhasi'
+        'name' : 'jay',
+        'roll' : 114,
+        'city' : 'Ranchi'
     }
 
+    headers = {'content-Type':'application/json'}  
+
     json_data = json.dumps(data)
-    r = requests.post(url = URL, data = json_data)
+    r = requests.post(url = URL, headers = headers, data = json_data)
 
     data = r.json()
     print(data)
@@ -35,12 +37,15 @@ post_data()
 """Update Data"""
 def update_data():
     data = {
-        'id' : 8,
-        'roll' : 108
+        'id' : 11,
+        'name' : 'Simran',
+        'city' : 'Delhi'
     }
 
+    headers = {'content_type':'application/json'}  
+    
     json_data = json.dumps(data)
-    r = requests.put(url = URL, data = json_data)
+    r = requests.put(url = URL, headers = headers, data = json_data)
 
     data = r.json()
     print(data)
@@ -50,7 +55,7 @@ def update_data():
 
 """Delete Data"""
 def delete_data():
-    data = {'id' : 8}
+    data = {'id' : 11}
 
     json_data = json.dumps(data)
     r = requests.delete(url = URL, data = json_data)

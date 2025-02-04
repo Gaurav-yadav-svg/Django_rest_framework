@@ -1,26 +1,16 @@
 from rest_framework import serializers
 from .models import Student
 
-def starts_with_r(value):
-    if value[0].lower() != 'r':
+#validator
+def starts_with_j(value):
+    if value[0].lower() != 'j':
         raise serializers.ValidationError("First letter should start's with r")
-class StudetSerializer(serializers.Serializer):
-    # id = serializers.IntegerField()
-    name = serializers.CharField(max_length=100, validators=[starts_with_r])
-    roll = serializers.IntegerField()
-    city = serializers.CharField(max_length=100)    
 
-    def create(self,validate_data):
-        return Student.objects.create(**validate_data)
-
-    def update(self,instance,validate_data):
-        print("Before update:- ",instance.name)
-        instance.name = validate_data.get('name',instance.name)
-        print("After update:- ",instance.name)
-        instance.roll = validate_data.get('roll',instance.roll)
-        instance.city = validate_data.get('city',instance.city)
-        instance.save()
-        return instance
+class StudetSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(validators=[starts_with_j])
+    class Meta:
+        model = Student
+        fields = ['name', 'roll', 'city']
 
     #Function Level Validation for apply validation on single field.
     def validate_roll(self,value):
@@ -32,6 +22,32 @@ class StudetSerializer(serializers.Serializer):
     def validate(self,data):
         nm = data.get('name')
         ct = data.get('city')
-        if nm.lower() == 'rohit' and ct.lower() != 'ranchi':
+        if nm.lower() == 'jay' and ct.lower() != 'ranchi':
             raise serializers.ValidationError("City must be Ranchi")
         return data
+
+
+
+
+
+"""normal creating class without ModelSerializer"""
+# class StudetSerializer(serializers.Serializer):
+#     # id = serializers.IntegerField()
+#     name = serializers.CharField(max_length=100, validators=[starts_with_r])
+#     roll = serializers.IntegerField()
+#     city = serializers.CharField(max_length=100)    
+
+#     def create(self,validate_data):
+#         return Student.objects.create(**validate_data)
+
+#     def update(self,instance,validate_data):
+#         print("Before update:- ",instance.name)
+#         instance.name = validate_data.get('name',instance.name)
+#         print("After update:- ",instance.name)
+#         instance.roll = validate_data.get('roll',instance.roll)
+#         instance.city = validate_data.get('city',instance.city)
+#         instance.save()
+#         return instance
+
+
+
