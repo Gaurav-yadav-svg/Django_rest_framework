@@ -9,5 +9,3 @@ class StudetSerializer(serializers.Serializer):
 
     def create(self,validate_data):
         return Student.objects.create(**validate_data)
-
-   
