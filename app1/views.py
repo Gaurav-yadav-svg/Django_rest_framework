@@ -61,9 +61,12 @@ from .models import Student
 from .serializers import StudetSerializer
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
-
+@csrf_exempt
 def Student_api(request):
+    
+    """Read Data"""
     if request.method == 'GET':
         json_data = request.body
         stream = io.BytesIO(json_data)
@@ -80,3 +83,20 @@ def Student_api(request):
         serializer = StudetSerializer(stu,many =True)
         json_data = JSONRenderer().render(serializer.data)
         return HttpResponse(json_data,content_type = 'application/json')
+
+    """Create Data"""
+    if request.method == 'POST':
+        json_data = request.body
+        stream = io.BytesIO(json_data)
+        pythondata = JSONParser().parse(stream)
+        serializer = StudetSerializer(data = pythondata)
+        if serializer.is_valid():
+            serializer.save()
+            res = {'msg':'Data Saved'}
+            json_data = JSONRenderer().render(res)
+            return HttpResponse(json_data,content_type = 'application/json')
+
+        json_data = JSONRenderer().render(serializer.errors)
+        return HttpResponse(json_data,content_type = 'application/json')
+
+  
